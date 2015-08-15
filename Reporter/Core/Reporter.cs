@@ -1,5 +1,5 @@
 //unity before version 5 is old
-#define USE_OLD_UNITY 
+//#define USE_OLD_UNITY 
 
 using UnityEngine;
 
@@ -322,9 +322,7 @@ namespace LogsViewer
 				Application.RegisterLogCallbackThreaded (new Application.LogCallback (CaptureLogThread));
 #else
 			//Application.logMessageReceived += CaptureLog ;
-			Application.RegisterLogCallback (new Application.LogCallback (CaptureLog));
-			Application.RegisterLogCallbackThreaded (new Application.LogCallback (CaptureLogThread));
-//			Application.logMessageReceivedThreaded += CaptureLogThread ;
+			Application.logMessageReceivedThreaded += CaptureLogThread ;
 #endif
 				created = true;
 				//addSample();
