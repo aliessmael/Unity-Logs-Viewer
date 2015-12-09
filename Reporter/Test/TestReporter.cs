@@ -1,14 +1,15 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Threading;
+using UnityEngine.SceneManagement;
 
 //this script used for test purpose ,it do by default 1000 logs  + 1000 warnings + 1000 errors
 //so you can check the functionality of in game logs
 //just drop this scrip to any empty game object on first scene your game start at
 public class TestReporter : MonoBehaviour {
 	
-	public int logTestCount = 1000 ;
-	public int threadLogTestCount = 1000 ;
+	public int logTestCount = 100 ;
+	public int threadLogTestCount = 100 ;
 	public bool logEverySecond = true;
 	int currentLogTestCount;
 	Reporter reporter ;
@@ -101,13 +102,13 @@ public class TestReporter : MonoBehaviour {
 			GUI.Label (rect1, "Draw circle on screen to show logs" , style);
 			GUI.Label (rect2, "To use Reporter just create reporter from reporter menu at first scene your game start" , style);
 			if( GUI.Button( rect3 , "Load ReporterScene")){
-				Application.LoadLevel("ReporterScene");
+				SceneManager.LoadScene("ReporterScene");
 			}
 			if( GUI.Button( rect4 , "Load test1")){
-				Application.LoadLevel("test1");
+                SceneManager.LoadScene("test1");
 			}
 			if( GUI.Button( rect5 , "Load test2")){
-				Application.LoadLevel("test2");
+                SceneManager.LoadScene("test2");
 			}
 			GUI.Label (rect6, "fps : " + reporter.fps.ToString("0.0") , style);
 		}
