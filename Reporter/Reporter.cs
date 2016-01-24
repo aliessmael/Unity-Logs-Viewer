@@ -1,11 +1,16 @@
-//unity before version 5 is old
-//#define USE_OLD_UNITY 
+
+
+#define UNITY_CHANGE1
+//use UNITY_CHANGE1 for unity older than "unity 5"
+//use UNITY_CHANGE2 for unity 5.0 -> 5.3 
+//use UNITY_CHANGE3 for unity 5.3 (fix for new SceneManger system  )
 
 using UnityEngine;
-//using System;
 using System.Collections;
 using System.Collections.Generic;
-
+#if UNITY_CHANGE3
+using UnityEngine.SceneManagement;
+#endif
 
 
 [System.Serializable]
@@ -45,10 +50,14 @@ public class Images
 
 	public GUISkin		reporterScrollerSkin;
 }
-//just drop this script to empty game object on first scene you game start at, this all what you have to do
+
+//To use Reporter just create reporter from menu (Reporter->Create) at first scene your game start . 
+//then set the ” Scrip execution order ” in (Edit -> Project Settings ) of Reporter.cs to be the highest.
+
+//Now to view logs all what you have to do is to make a circle gesture using your mouse (click and drag) 
+//or your finger (touch and drag) on the screen to show all these logs
 //no coding is required 
-//then you can view logs , warnings , errors and exceptions inside your game
-//just draw circle on your game to view all logs
+
 public class Reporter : MonoBehaviour {
 
 
@@ -69,6 +78,14 @@ public class Reporter : MonoBehaviour {
 		public static float MemSize(){
 			float s = sizeof( float ) + sizeof( byte ) + sizeof( float ) + sizeof( float ) ;
 			return  s;
+		}
+
+		public string GetSceneName()
+		{
+			if( (int)loadedScene == -1 )
+				return "AssetBundleScene";
+
+			return scenes[ loadedScene];
 		}
 	}
 
@@ -115,7 +132,7 @@ public class Reporter : MonoBehaviour {
 	public bool show = false ;
 	//collapse logs
 	bool collapse ;
-	//to deside if you want to clean logs for new loaded scene
+	//to decide if you want to clean logs for new loaded scene
 	bool clearOnNewSceneLoaded ;
 
 	bool showTime ;
@@ -169,7 +186,7 @@ public class Reporter : MonoBehaviour {
 	}
 	float  gcTotalMemory ;
 	public string UserData = "";
-	//fram rate per seconds
+	//frame rate per second
 	public float fps ;
 	public string fpsText ;
 
@@ -193,7 +210,7 @@ public class Reporter : MonoBehaviour {
 	//used to check if you have In Game Logs multiple time in different scene
 	//only one should work and other should be deleted
 	static bool created = false ;
-	//public delegate void OnLogHandler( string condition, string stacktrace, LogType type );
+	//public delegate void OnLogHandler( string condition, string stack-trace, LogType type );
 	//public event OnLogHandler OnLog ;
 
 	public Images images;
@@ -248,7 +265,7 @@ public class Reporter : MonoBehaviour {
 	public Vector2 size = new Vector2( 32 , 32 ) ;
 	public float maxSize = 20 ;
 	public int numOfCircleToShow = 1 ;
-	string[] scenes ;
+	static string[] scenes ;
 	string   currentScene ;
 	string   filterText="";
 
@@ -256,7 +273,7 @@ public class Reporter : MonoBehaviour {
 	string deviceType ;
 	string deviceName ;
 	string graphicsMemorySize ;
-	#if !USE_OLD_UNITY
+	#if !UNITY_CHANGE1
 	string maxTextureSize ;
 	#endif
 	string systemMemorySize ;
@@ -281,8 +298,12 @@ public class Reporter : MonoBehaviour {
 
 		Sample sample = new Sample();
 		sample.fps = fps ;
-		sample.fpsText = fpsText ;
+		sample.fpsText = fpsText ; 
+		#if UNITY_CHANGE3
+		sample.loadedScene = (byte)SceneManager.GetActiveScene().buildIndex;
+		#else
 		sample.loadedScene = (byte)Application.loadedLevel ;
+		#endif
 		sample.time = Time.realtimeSinceStartup ;
 		sample.memory = gcTotalMemory ;
 		samples.Add( sample );
@@ -301,16 +322,21 @@ public class Reporter : MonoBehaviour {
 			catch( System.Exception e ){
 				Debug.LogException( e );
 			}
+			#if UNITY_CHANGE3
+			scenes = new string[ SceneManager.sceneCountInBuildSettings ];
+			currentScene = SceneManager.GetActiveScene().name;
+			#else
 			scenes = new string[ Application.levelCount ];
 			currentScene = Application.loadedLevelName;
+			#endif
 			DontDestroyOnLoad( gameObject );
-#if USE_OLD_UNITY
+			#if UNITY_CHANGE1
 			Application.RegisterLogCallback (new Application.LogCallback (CaptureLog));
 			Application.RegisterLogCallbackThreaded (new Application.LogCallback (CaptureLogThread));
-#else
+			#else
 			//Application.logMessageReceived += CaptureLog ;
 			Application.logMessageReceivedThreaded += CaptureLogThread ;
-#endif
+			#endif
 			created = true ;
 			//addSample();
 		}
@@ -322,7 +348,7 @@ public class Reporter : MonoBehaviour {
 		}
 
 
-		//initialize gui and styles for gui porpose
+		//initialize gui and styles for gui purpose
 
 		clearContent 	= new GUIContent("",images.clearImage,"Clear logs");
 		collapseContent = new GUIContent("",images.collapseImage,"Collapse logs");
@@ -390,7 +416,7 @@ public class Reporter : MonoBehaviour {
 		deviceType  = SystemInfo.deviceType.ToString() ;
 		deviceName  = SystemInfo.deviceName.ToString() ;
 		graphicsMemorySize = SystemInfo.graphicsMemorySize.ToString() ;
-		#if !USE_OLD_UNITY
+		#if !UNITY_CHANGE1
 		maxTextureSize = SystemInfo.maxTextureSize.ToString() ;
 		#endif
 		systemMemorySize = SystemInfo.systemMemorySize.ToString() ; 
@@ -728,7 +754,7 @@ public class Reporter : MonoBehaviour {
 		GUILayout.Label( SystemInfo.graphicsDeviceName , nonStyle , GUILayout.Height(size.y));
 		GUILayout.Space( size.x);
 		GUILayout.Label( graphicsMemorySize , nonStyle , GUILayout.Height(size.y));
-		#if !USE_OLD_UNITY
+		#if !UNITY_CHANGE1
 		GUILayout.Space( size.x);
 		GUILayout.Label( maxTextureSize , nonStyle , GUILayout.Height(size.y));
 		#endif
@@ -944,7 +970,7 @@ public class Reporter : MonoBehaviour {
 		GUILayout.EndHorizontal();
 
 		GUILayout.BeginHorizontal();
-		GUILayout.Label( "Comming Soon", nonStyle , GUILayout.Height(size.y));
+		GUILayout.Label( "Coming Soon", nonStyle , GUILayout.Height(size.y));
 		GUILayout.EndHorizontal();
 
 		GUILayout.BeginHorizontal();
@@ -1171,7 +1197,7 @@ public class Reporter : MonoBehaviour {
 		//selectedIndex = Mathf.Clamp( selectedIndex , -1 , totalCount -1);
 		if( beforeHeight > 0 )
 		{
-			//fill invisible gap befor scroller to make proper scroller pos
+			//fill invisible gap before scroller to make proper scroller pos
 			GUILayout.BeginHorizontal(  GUILayout.Height( beforeHeight ) );
 			GUILayout.Label("---");
 			GUILayout.EndHorizontal();
@@ -1259,7 +1285,8 @@ public class Reporter : MonoBehaviour {
 			}
 			sceneRect = memoryRect ;
 			if( showScene ){
-				tempContent.text = scenes[ sample.loadedScene];
+
+				tempContent.text = sample.GetSceneName();
 				w = currentLogStyle.CalcSize( tempContent ).x + size.x;
 				sceneRect.x -= w ;
 				sceneRect.width = size.x ;
@@ -1291,7 +1318,7 @@ public class Reporter : MonoBehaviour {
 				}
 				if( showScene ){
 					GUI.Box( sceneRect,showSceneContent ,currentLogStyle);
-					GUI.Label( sceneLabelRect ,scenes[ sample.loadedScene] ,currentLogStyle   );
+					GUI.Label( sceneLabelRect ,sample.GetSceneName() ,currentLogStyle   );
 				}
 				if( showMemory ){
 					GUI.Box(memoryRect, showMemoryContent ,currentLogStyle );
@@ -1322,7 +1349,7 @@ public class Reporter : MonoBehaviour {
 				}
 				if( showScene ){
 					GUI.Box(sceneRect, showSceneContent ,currentLogStyle) ;
-					GUI.Label( sceneLabelRect, scenes[ sample.loadedScene] ,currentLogStyle  ) ;
+					GUI.Label( sceneLabelRect, sample.GetSceneName() ,currentLogStyle  ) ;
 				}
 				if( showMemory ){
 					GUI.Box( memoryRect, showMemoryContent ,currentLogStyle) ;
@@ -1435,7 +1462,7 @@ public class Reporter : MonoBehaviour {
 			GUILayout.Space( size.x );
 
 			GUILayout.Box( showSceneContent,nonStyle, GUILayout.Width(size.x) ,GUILayout.Height(size.y));
-			GUILayout.Label( scenes[ selectedSample.loadedScene],nonStyle );
+			GUILayout.Label( selectedSample.GetSceneName(),nonStyle );
 			GUILayout.Space( size.x );
 			
 			GUILayout.Box( showMemoryContent,nonStyle, GUILayout.Width(size.x) ,GUILayout.Height(size.y));
@@ -1530,7 +1557,7 @@ public class Reporter : MonoBehaviour {
 			GUILayout.Space( size.x );
 			
 			GUILayout.Box( showSceneContent,nonStyle, GUILayout.Width(size.x) ,GUILayout.Height(size.y));
-			GUILayout.Label( scenes[ selectedSample.loadedScene],nonStyle );
+			GUILayout.Label( selectedSample.GetSceneName(),nonStyle );
 			GUILayout.Space( size.x );
 			
 			GUILayout.Box( showMemoryContent,nonStyle, GUILayout.Width(size.x) ,GUILayout.Height(size.y));
@@ -1814,8 +1841,16 @@ public class Reporter : MonoBehaviour {
 		fpsText = fps.ToString("0.000");
 		gcTotalMemory = (((float)System.GC.GetTotalMemory(false))/1024/1024) ;
 		//addSample();
-		if( string.IsNullOrEmpty( scenes[ Application.loadedLevel ] ))
+
+		#if UNITY_CHANGE3
+		int sceneIndex = SceneManager.GetActiveScene().buildIndex ;
+		if( sceneIndex != -1 && string.IsNullOrEmpty( scenes[sceneIndex] ))
+			scenes[ SceneManager.GetActiveScene().buildIndex ] = SceneManager.GetActiveScene().name ;
+		#else
+		int sceneIndex = Application.loadedLevel ;
+		if( sceneIndex != -1 && string.IsNullOrEmpty( scenes[ Application.loadedLevel ] ))
 			scenes[ Application.loadedLevel ] = Application.loadedLevelName ;
+		#endif
 
 		float elapsed = Time.realtimeSinceStartup - lastUpdate ;
 		fps = 1f / elapsed ;
@@ -1845,10 +1880,10 @@ public class Reporter : MonoBehaviour {
 		{
 			lastUpdate2 = Time.realtimeSinceStartup ;
 			//be sure no body else take control of log 
-#if USE_OLD_UNITY
+			#if UNITY_CHANGE1
 			Application.RegisterLogCallback (new Application.LogCallback (CaptureLog));
 			Application.RegisterLogCallbackThreaded (new Application.LogCallback (CaptureLogThread));
-#endif
+			#endif
 		}
 	}
 
@@ -1990,8 +2025,13 @@ public class Reporter : MonoBehaviour {
 		if( clearOnNewSceneLoaded )
 			clear();
 
+		#if UNITY_CHANGE3
+		currentScene = SceneManager.GetActiveScene().name ;
+		Debug.Log( "Scene " + SceneManager.GetActiveScene().name + " is loaded");
+		#else
 		currentScene = Application.loadedLevelName ;
 		Debug.Log( "Scene " + Application.loadedLevelName + " is loaded");
+		#endif
 	}
 	
 	//save user config
