@@ -5,7 +5,7 @@ using UnityEngine;
 //using System;
 using System.Collections;
 using System.Collections.Generic;
-
+using UnityEngine.SceneManagement;
 
 
 [System.Serializable]
@@ -115,7 +115,7 @@ public class Reporter : MonoBehaviour {
 	public bool show = false ;
 	//collapse logs
 	bool collapse ;
-	//to deside if you want to clean logs for new loaded scene
+	//to decide if you want to clean logs for new loaded scene
 	bool clearOnNewSceneLoaded ;
 
 	bool showTime ;
@@ -169,7 +169,7 @@ public class Reporter : MonoBehaviour {
 	}
 	float  gcTotalMemory ;
 	public string UserData = "";
-	//fram rate per seconds
+	//frame rate per seconds
 	public float fps ;
 	public string fpsText ;
 
@@ -193,7 +193,7 @@ public class Reporter : MonoBehaviour {
 	//used to check if you have In Game Logs multiple time in different scene
 	//only one should work and other should be deleted
 	static bool created = false ;
-	//public delegate void OnLogHandler( string condition, string stacktrace, LogType type );
+	//public delegate void OnLogHandler( string condition, string stack-trace, LogType type );
 	//public event OnLogHandler OnLog ;
 
 	public Images images;
@@ -282,7 +282,7 @@ public class Reporter : MonoBehaviour {
 		Sample sample = new Sample();
 		sample.fps = fps ;
 		sample.fpsText = fpsText ;
-		sample.loadedScene = (byte)Application.loadedLevel ;
+		sample.loadedScene = (byte)SceneManager.GetActiveScene().buildIndex;
 		sample.time = Time.realtimeSinceStartup ;
 		sample.memory = gcTotalMemory ;
 		samples.Add( sample );
@@ -301,8 +301,8 @@ public class Reporter : MonoBehaviour {
 			catch( System.Exception e ){
 				Debug.LogException( e );
 			}
-			scenes = new string[ Application.levelCount ];
-			currentScene = Application.loadedLevelName;
+			scenes = new string[ SceneManager.sceneCountInBuildSettings ];
+			currentScene = SceneManager.GetActiveScene().name;
 			DontDestroyOnLoad( gameObject );
 #if USE_OLD_UNITY
 			Application.RegisterLogCallback (new Application.LogCallback (CaptureLog));
@@ -322,7 +322,7 @@ public class Reporter : MonoBehaviour {
 		}
 
 
-		//initialize gui and styles for gui porpose
+		//initialize gui and styles for gui purpose
 
 		clearContent 	= new GUIContent("",images.clearImage,"Clear logs");
 		collapseContent = new GUIContent("",images.collapseImage,"Collapse logs");
@@ -944,7 +944,7 @@ public class Reporter : MonoBehaviour {
 		GUILayout.EndHorizontal();
 
 		GUILayout.BeginHorizontal();
-		GUILayout.Label( "Comming Soon", nonStyle , GUILayout.Height(size.y));
+		GUILayout.Label( "Coming Soon", nonStyle , GUILayout.Height(size.y));
 		GUILayout.EndHorizontal();
 
 		GUILayout.BeginHorizontal();
@@ -1171,7 +1171,7 @@ public class Reporter : MonoBehaviour {
 		//selectedIndex = Mathf.Clamp( selectedIndex , -1 , totalCount -1);
 		if( beforeHeight > 0 )
 		{
-			//fill invisible gap befor scroller to make proper scroller pos
+			//fill invisible gap before scroller to make proper scroller pos
 			GUILayout.BeginHorizontal(  GUILayout.Height( beforeHeight ) );
 			GUILayout.Label("---");
 			GUILayout.EndHorizontal();
@@ -1814,8 +1814,8 @@ public class Reporter : MonoBehaviour {
 		fpsText = fps.ToString("0.000");
 		gcTotalMemory = (((float)System.GC.GetTotalMemory(false))/1024/1024) ;
 		//addSample();
-		if( string.IsNullOrEmpty( scenes[ Application.loadedLevel ] ))
-			scenes[ Application.loadedLevel ] = Application.loadedLevelName ;
+		if( string.IsNullOrEmpty( scenes[SceneManager.GetActiveScene().buildIndex] ))
+			scenes[ SceneManager.GetActiveScene().buildIndex ] = SceneManager.GetActiveScene().name ;
 
 		float elapsed = Time.realtimeSinceStartup - lastUpdate ;
 		fps = 1f / elapsed ;
@@ -1990,8 +1990,8 @@ public class Reporter : MonoBehaviour {
 		if( clearOnNewSceneLoaded )
 			clear();
 
-		currentScene = Application.loadedLevelName ;
-		Debug.Log( "Scene " + Application.loadedLevelName + " is loaded");
+		currentScene = SceneManager.GetActiveScene().name ;
+		Debug.Log( "Scene " + SceneManager.GetActiveScene().name + " is loaded");
 	}
 	
 	//save user config
