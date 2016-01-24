@@ -5,6 +5,14 @@ All what you have to do is to make a circle gesture using your mouse (click and 
 You can download also from unity asset store
 https://www.assetstore.unity3d.com/en/#!/content/12047
 
+To setup log viewer do the following
+1 - create reporter from menu (Reporter->Create) at first scene your game start . 
+2 - then set the ” Scrip execution order ” in (Edit -> Project Settings ) of Reporter.cs to be the highest.
+3 - in reporter.cs at first line choose the proper #define which is matching your unity version, also do the same for testReporter.cs
+    #define UNITY_CHANGE1 for unity older than "unity 5"
+    #define UNITY_CHANGE2 for unity 5.0 -> 5.3
+    #define UNITY_CHANGE2 for unity 5.3 (fix for new SceneManger system  )
+
 <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=J9MX5C6Q7B2NY">
     <img src="https://www.paypalobjects.com/webstatic/en_US/btn/btn_donate_cc_147x47.png">
     </img>
