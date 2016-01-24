@@ -12,7 +12,7 @@ To setup log viewer do the following
     <ul>
     <li>#define UNITY_CHANGE1 for unity older than "unity 5"</li>
     <li>#define UNITY_CHANGE2 for unity 5.0 -> 5.3</li>
-    <li>#define UNITY_CHANGE2 for unity 5.3 (fix for new SceneManger system  )</li>
+    <li>#define UNITY_CHANGE3 for unity 5.3 (fix for new SceneManger system  )</li>
     <ul>
     </li>
 
