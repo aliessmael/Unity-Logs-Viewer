@@ -34,8 +34,6 @@ public class Images
 	public Texture2D   	softwareImage;
 	public Texture2D   	dateImage;
 	public Texture2D   	showFpsImage;
-	public Texture2D   	showGraphImage;
-	public Texture2D   	graphImage;
 	public Texture2D   	infoImage;
 	public Texture2D    searchImage;
 	public Texture2D   	closeImage;
@@ -44,7 +42,6 @@ public class Images
 	public Texture2D   	systemInfoImage;
 	public Texture2D   	graphicsInfoImage;
 	public Texture2D   	backImage;
-	public Texture2D   	cameraImage;
 	
 	public Texture2D   	logImage;
 	public Texture2D   	warningImage;
@@ -367,7 +364,6 @@ public class Reporter : MonoBehaviour {
 		softwareContent = new GUIContent("",images.softwareImage,"Software");
 		dateContent = new GUIContent("",images.dateImage,"Date");
 		showFpsContent = new GUIContent("",images.showFpsImage,"Show Hide fps");
-		graphContent = new GUIContent("",images.showGraphImage,"Show Graph");
 		infoContent = new GUIContent("",images.infoImage,"Information about application");
 		searchContent = new GUIContent("",images.searchImage,"Search for logs");
 		closeContent = new GUIContent("",images.closeImage,"Hide logs");
@@ -378,7 +374,6 @@ public class Reporter : MonoBehaviour {
 		graphicsInfoContent = new GUIContent("",images.graphicsInfoImage,"Graphics Info");
 		backContent = new GUIContent("",images.backImage,"Back");
 
-		cameraContent = new GUIContent("",images.cameraImage,"Select Photo");
 
 
 
