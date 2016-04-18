@@ -1752,10 +1752,16 @@ public class Reporter : MonoBehaviour
 		startIndex = Mathf.Clamp(startIndex, 0, currentLog.Count);
 	}
 
+	// For FPS Counter
+	private int frames = 0;
+	private bool firstTime = true;
+	private float lastUpdate = 0f;
+	private const int requiredFrames = 10;
+	private const float updateInterval = 0.25f;
 
-	float lastUpdate = 0;
+#if UNITY_CHANGE1
 	float lastUpdate2 = 0;
-	Rect temp;
+#endif
 
 	void doShow()
 	{
@@ -1788,9 +1794,6 @@ public class Reporter : MonoBehaviour
 			scenes[Application.loadedLevel] = Application.loadedLevelName;
 #endif
 
-		float elapsed = Time.realtimeSinceStartup - lastUpdate;
-		fps = 1f / elapsed;
-		lastUpdate = Time.realtimeSinceStartup;
 		calculateStartIndex();
 		if (!show && isGestureDone()) {
 			doShow();
@@ -1807,14 +1810,29 @@ public class Reporter : MonoBehaviour
 			}
 		}
 
+#if UNITY_CHANGE1
 		float elapsed2 = Time.realtimeSinceStartup - lastUpdate2;
 		if (elapsed2 > 1) {
 			lastUpdate2 = Time.realtimeSinceStartup;
 			//be sure no body else take control of log 
-#if UNITY_CHANGE1
 			Application.RegisterLogCallback (new Application.LogCallback (CaptureLog));
 			Application.RegisterLogCallbackThreaded (new Application.LogCallback (CaptureLogThread));
+		}
 #endif
+
+		// FPS Counter
+		if (firstTime) {
+			firstTime = false;
+			lastUpdate = Time.realtimeSinceStartup;
+			frames = 0;
+			return;
+		}
+		frames++;
+		float dt = Time.realtimeSinceStartup - lastUpdate;
+		if (dt > updateInterval && frames > requiredFrames) {
+			fps = (float)frames / dt;
+			lastUpdate = Time.realtimeSinceStartup;
+			frames = 0;
 		}
 	}
 
