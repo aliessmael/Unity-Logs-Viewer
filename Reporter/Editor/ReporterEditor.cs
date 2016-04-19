@@ -11,14 +11,20 @@ public class ReporterEditor : Editor
 	[MenuItem("Reporter/Create")]
 	public static void CreateReporter()
 	{
+		const int ReporterExecOrder = -12000;
 		GameObject reporterObj = new GameObject();
 		reporterObj.name = "Reporter";
 		Reporter reporter = reporterObj.AddComponent<Reporter>();
 		reporterObj.AddComponent<ReporterMessageReceiver>();
 		//reporterObj.AddComponent<TestReporter>();
 
-		MonoScript scriptAsset = MonoScript.FromMonoBehaviour(reporter);
-		string reporterPath = Path.GetDirectoryName(AssetDatabase.GetAssetPath(scriptAsset));
+		MonoScript reporterScript = MonoScript.FromMonoBehaviour(reporter);
+		string reporterPath = Path.GetDirectoryName(AssetDatabase.GetAssetPath(reporterScript));
+
+		if (MonoImporter.GetExecutionOrder(reporterScript) != ReporterExecOrder) {
+			MonoImporter.SetExecutionOrder(reporterScript, ReporterExecOrder);
+			//Debug.Log("Fixing exec order for " + reporterScript.name);
+		}
 
 		reporter.images = new Images();
 		reporter.images.clearImage           = (Texture2D)AssetDatabase.LoadAssetAtPath(Path.Combine(reporterPath, "Images/clear.png"), typeof(Texture2D));
