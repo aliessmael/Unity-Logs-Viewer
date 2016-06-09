@@ -17,6 +17,9 @@ public class ReporterEditor : Editor
 		Reporter reporter = reporterObj.AddComponent<Reporter>();
 		reporterObj.AddComponent<ReporterMessageReceiver>();
 		//reporterObj.AddComponent<TestReporter>();
+		
+		// Register root object for undo.
+		Undo.RegisterCreatedObjectUndo(reporterObj, "Create Reporter Object");
 
 		MonoScript reporterScript = MonoScript.FromMonoBehaviour(reporter);
 		string reporterPath = Path.GetDirectoryName(AssetDatabase.GetAssetPath(reporterScript));
