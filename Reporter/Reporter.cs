@@ -1,4 +1,4 @@
-#if UNITY_CHANGE1 || UNITY_CHANGE2 || UNITY_CHANGE3
+﻿#if UNITY_CHANGE1 || UNITY_CHANGE2 || UNITY_CHANGE3
 #warning UNITY_CHANGE has been set manually
 #elif UNITY_4_0 || UNITY_4_1 || UNITY_4_2 || UNITY_4_3 || UNITY_4_4 || UNITY_4_5 || UNITY_4_6 || UNITY_4_7
 #define UNITY_CHANGE1
@@ -2010,11 +2010,12 @@ public class Reporter : MonoBehaviour
 			url = System.IO.Path.Combine(streamingAssetsPath, prefFile);
 		}
 
+#if UNITY_5
 		if (Application.platform != RuntimePlatform.OSXWebPlayer && Application.platform != RuntimePlatform.WindowsWebPlayer)
 			if (!url.Contains("://"))
 				url = "file://" + url;
-
-
+		}
+#endif
 		// float startTime = Time.realtimeSinceStartup;
 		WWW www = new WWW(url);
 		yield return www;
