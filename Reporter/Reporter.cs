@@ -289,7 +289,23 @@ public class Reporter : MonoBehaviour
 	{
 		if (!Initialized)
 			Initialize();
-	}
+
+#if (UNITY_5_4_OR_NEWER)
+        SceneManager.sceneLoaded += (scene, loadingMode) =>
+        {
+            if (clearOnNewSceneLoaded)
+                clear();
+
+#if UNITY_CHANGE3
+            currentScene = SceneManager.GetActiveScene().name;
+            Debug.Log("Scene " + SceneManager.GetActiveScene().name + " is loaded");
+#else
+		    currentScene = Application.loadedLevelName;
+		    Debug.Log("Scene " + Application.loadedLevelName + " is loaded");
+#endif
+        };
+#endif
+    }
 
 	void OnEnable()
 	{
@@ -593,16 +609,16 @@ public class Reporter : MonoBehaviour
 		selectedLog = null;
 	}
 
-	Rect screenRect;
-	Rect toolBarRect;
+	Rect screenRect = Rect.zero;
+    Rect toolBarRect = Rect.zero;
 	Rect logsRect;
 	Rect stackRect;
 	Rect graphRect;
 	Rect graphMinRect;
 	Rect graphMaxRect;
-	Rect buttomRect;
+	Rect buttomRect = Rect.zero;
 	Vector2 stackRectTopLeft;
-	Rect detailRect;
+	Rect detailRect = Rect.zero;
 
 	Vector2 scrollPosition;
 	Vector2 scrollPosition2;
@@ -686,7 +702,7 @@ public class Reporter : MonoBehaviour
 		}
 	}
 
-	Rect countRect;
+	Rect countRect = Rect.zero;
 	Rect timeRect;
 	Rect timeLabelRect;
 	Rect sceneRect;
@@ -1954,6 +1970,8 @@ public class Reporter : MonoBehaviour
 		}
 	}
 
+
+#if !(UNITY_5_4_OR_NEWER)
 	//new scene is loaded
 	void OnLevelWasLoaded()
 	{
@@ -1968,6 +1986,7 @@ public class Reporter : MonoBehaviour
 		Debug.Log("Scene " + Application.loadedLevelName + " is loaded");
 #endif
 	}
+#endif
 
 	//save user config
 	void OnApplicationQuit()
@@ -2010,9 +2029,12 @@ public class Reporter : MonoBehaviour
 			url = System.IO.Path.Combine(streamingAssetsPath, prefFile);
 		}
 
+
+#if !(UNITY_5_4_OR_NEWER)
 		if (Application.platform != RuntimePlatform.OSXWebPlayer && Application.platform != RuntimePlatform.WindowsWebPlayer)
 			if (!url.Contains("://"))
 				url = "file://" + url;
+#endif
 
 
 		// float startTime = Time.realtimeSinceStartup;
