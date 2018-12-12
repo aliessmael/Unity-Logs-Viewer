@@ -10,10 +10,25 @@ All what you have to do is to make a circle gesture using your mouse (click and 
 You can download also from unity asset store
 https://www.assetstore.unity3d.com/en/#!/content/12047
 
-To setup log viewer do the following
-<li>1 - create reporter from menu (Reporter->Create) at first scene your game start . </li>
-<li>2 - then set the ” Scrip execution order ” in (Edit -> Project Settings ) of Reporter.cs to be the highest.</li>
 
+#### To setup log viewer do the following
+    1 - create reporter from menu (Reporter->Create) at first scene your game start.
+    2 - then set the ” Scrip execution order ” in (Edit -> Project Settings ) of Reporter.cs to be the highest.
+
+
+    
+    
+    
+### Version 1.7
+    - Add Save logs button( thanks for Ahmed Shbli ).
+    - Fix deprecated code for new unity.
+    - Fix Warnings.
+    - Fix loading scene from asset bundle error.
+
+
+
+    
+    
 <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=J9MX5C6Q7B2NY">
     <img src="https://www.paypalobjects.com/webstatic/en_US/btn/btn_donate_cc_147x47.png">
     </img>
