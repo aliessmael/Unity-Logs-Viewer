@@ -13,6 +13,7 @@
 
 
 using UnityEngine;
+using System.IO;
 using System.Collections;
 using System.Collections.Generic;
 #if UNITY_CHANGE3
@@ -34,7 +35,8 @@ public class Images
 	public Texture2D dateImage;
 	public Texture2D showFpsImage;
 	public Texture2D infoImage;
-	public Texture2D searchImage;
+    public Texture2D saveLogsImage; 
+    public Texture2D searchImage;
 	public Texture2D closeImage;
 
 	public Texture2D buildFromImage;
@@ -89,7 +91,7 @@ public class Reporter : MonoBehaviour
 
 		public string GetSceneName()
 		{
-			if ((int)loadedScene == -1)
+			if (loadedScene == 255)
 				return "AssetBundleScene";
 
 			return scenes[loadedScene];
@@ -236,6 +238,7 @@ public class Reporter : MonoBehaviour
 	GUIContent showFpsContent;
 	//GUIContent graphContent;
 	GUIContent infoContent;
+    GUIContent saveLogsContent;
 	GUIContent searchContent;
 	GUIContent closeContent;
 
@@ -289,9 +292,20 @@ public class Reporter : MonoBehaviour
 	{
 		if (!Initialized)
 			Initialize();
-	}
 
-	void OnEnable()
+#if UNITY_CHANGE3
+        SceneManager.sceneLoaded += _OnLevelWasLoaded;
+#endif
+    }
+
+    private void OnDestroy()
+    {
+#if UNITY_CHANGE3
+        SceneManager.sceneLoaded -= _OnLevelWasLoaded;
+#endif
+    }
+
+    void OnEnable()
 	{
 		if (logs.Count == 0)//if recompile while in play mode
 			clear();
@@ -366,7 +380,8 @@ public class Reporter : MonoBehaviour
 		dateContent = new GUIContent("", images.dateImage, "Date");
 		showFpsContent = new GUIContent("", images.showFpsImage, "Show Hide fps");
 		infoContent = new GUIContent("", images.infoImage, "Information about application");
-		searchContent = new GUIContent("", images.searchImage, "Search for logs");
+        saveLogsContent = new GUIContent("", images.saveLogsImage, "Save logs to device");
+        searchContent = new GUIContent("", images.searchImage, "Search for logs");
 		closeContent = new GUIContent("", images.closeImage, "Hide logs");
 		userContent = new GUIContent("", images.userImage, "User");
 
@@ -593,16 +608,16 @@ public class Reporter : MonoBehaviour
 		selectedLog = null;
 	}
 
-	Rect screenRect;
-	Rect toolBarRect;
-	Rect logsRect;
-	Rect stackRect;
-	Rect graphRect;
-	Rect graphMinRect;
-	Rect graphMaxRect;
-	Rect buttomRect;
+	Rect screenRect = Rect.zero;
+	Rect toolBarRect = Rect.zero;
+	Rect logsRect = Rect.zero;
+	Rect stackRect = Rect.zero;
+	Rect graphRect = Rect.zero;
+	Rect graphMinRect = Rect.zero;
+	Rect graphMaxRect = Rect.zero;
+	Rect buttomRect = Rect.zero ;
 	Vector2 stackRectTopLeft;
-	Rect detailRect;
+	Rect detailRect = Rect.zero;
 
 	Vector2 scrollPosition;
 	Vector2 scrollPosition2;
@@ -686,15 +701,15 @@ public class Reporter : MonoBehaviour
 		}
 	}
 
-	Rect countRect;
-	Rect timeRect;
-	Rect timeLabelRect;
-	Rect sceneRect;
-	Rect sceneLabelRect;
-	Rect memoryRect;
-	Rect memoryLabelRect;
-	Rect fpsRect;
-	Rect fpsLabelRect;
+	Rect countRect = Rect.zero;
+	Rect timeRect = Rect.zero;
+	Rect timeLabelRect = Rect.zero;
+	Rect sceneRect = Rect.zero;
+	Rect sceneLabelRect = Rect.zero;
+	Rect memoryRect = Rect.zero;
+	Rect memoryLabelRect = Rect.zero;
+	Rect fpsRect = Rect.zero;
+	Rect fpsLabelRect = Rect.zero;
 	GUIContent tempContent = new GUIContent();
 
 
@@ -1046,10 +1061,13 @@ public class Reporter : MonoBehaviour
 		if (GUILayout.Button(infoContent, barStyle, GUILayout.Width(size.x * 2), GUILayout.Height(size.y * 2))) {
 			currentView = ReportView.Info;
 		}
+        if (GUILayout.Button(saveLogsContent, barStyle, GUILayout.Width(size.x * 2), GUILayout.Height(size.y * 2)))
+        {
+            SaveLogsToDevice();
+        }
 
 
-
-		GUILayout.FlexibleSpace();
+        GUILayout.FlexibleSpace();
 
 
 		string logsText = " ";
@@ -1954,8 +1972,20 @@ public class Reporter : MonoBehaviour
 		}
 	}
 
-	//new scene is loaded
-	void OnLevelWasLoaded()
+#if !UNITY_CHANGE3
+    class Scene
+    {
+    }
+    class LoadSceneMode
+    {
+    }
+    void OnLevelWasLoaded()
+    {
+        _OnLevelWasLoaded( null );
+    }
+#endif
+    //new scene is loaded
+    void _OnLevelWasLoaded( Scene _null1 , LoadSceneMode _null2 )
 	{
 		if (clearOnNewSceneLoaded)
 			clear();
@@ -2010,7 +2040,7 @@ public class Reporter : MonoBehaviour
 			url = System.IO.Path.Combine(streamingAssetsPath, prefFile);
 		}
 
-		if (Application.platform != RuntimePlatform.OSXWebPlayer && Application.platform != RuntimePlatform.WindowsWebPlayer)
+		//if (Application.platform != RuntimePlatform.OSXWebPlayer && Application.platform != RuntimePlatform.WindowsWebPlayer)
 			if (!url.Contains("://"))
 				url = "file://" + url;
 
@@ -2028,6 +2058,19 @@ public class Reporter : MonoBehaviour
 
 		yield break;
 	}
+
+    private void SaveLogsToDevice()
+    {
+        string filePath = Application.persistentDataPath + "/logs.txt";
+        List<string> fileContentsList = new List<string>();
+        Debug.Log("Saving logs to " + filePath);
+        File.Delete(filePath);
+        for (int i = 0; i < logs.Count; i++)
+        {
+            fileContentsList.Add(logs[i].logType + "\n" + logs[i].condition + "\n" + logs[i].stacktrace);
+        }
+        File.WriteAllLines(filePath, fileContentsList.ToArray());
+    }
 }
 
 
