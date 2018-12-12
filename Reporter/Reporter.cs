@@ -291,21 +291,21 @@ public class Reporter : MonoBehaviour
 			Initialize();
 
 #if (UNITY_5_4_OR_NEWER)
-        SceneManager.sceneLoaded += (scene, loadingMode) =>
-        {
-            if (clearOnNewSceneLoaded)
-                clear();
+		SceneManager.sceneLoaded += (scene, loadingMode) =>
+		{
+			if (clearOnNewSceneLoaded)
+				clear();
 
 #if UNITY_CHANGE3
-            currentScene = SceneManager.GetActiveScene().name;
-            Debug.Log("Scene " + SceneManager.GetActiveScene().name + " is loaded");
+			currentScene = SceneManager.GetActiveScene().name;
+			Debug.Log("Scene " + SceneManager.GetActiveScene().name + " is loaded");
 #else
-		    currentScene = Application.loadedLevelName;
-		    Debug.Log("Scene " + Application.loadedLevelName + " is loaded");
+			currentScene = Application.loadedLevelName;
+			Debug.Log("Scene " + Application.loadedLevelName + " is loaded");
 #endif
-        };
+		};
 #endif
-    }
+	}
 
 	void OnEnable()
 	{
@@ -610,7 +610,7 @@ public class Reporter : MonoBehaviour
 	}
 
 	Rect screenRect = Rect.zero;
-    Rect toolBarRect = Rect.zero;
+	Rect toolBarRect = Rect.zero;
 	Rect logsRect;
 	Rect stackRect;
 	Rect graphRect;
