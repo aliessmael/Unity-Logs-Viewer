@@ -1,4 +1,4 @@
-﻿#if UNITY_CHANGE1 || UNITY_CHANGE2 || UNITY_CHANGE3
+﻿#if UNITY_CHANGE1 || UNITY_CHANGE2 || UNITY_CHANGE3 || UNITY_CHANGE4
 #warning UNITY_CHANGE has been set manually
 #elif UNITY_4_0 || UNITY_4_1 || UNITY_4_2 || UNITY_4_3 || UNITY_4_4 || UNITY_4_5 || UNITY_4_6 || UNITY_4_7
 #define UNITY_CHANGE1
@@ -7,9 +7,13 @@
 #else
 #define UNITY_CHANGE3
 #endif
+#if UNITY_2018_3
+#define UNITY_CHANGE4
+#endif
 //use UNITY_CHANGE1 for unity older than "unity 5"
 //use UNITY_CHANGE2 for unity 5.0 -> 5.3 
-//use UNITY_CHANGE3 for unity 5.3 (fix for new SceneManger system  )
+//use UNITY_CHANGE3 for unity 5.3 (fix for new SceneManger system)
+//use UNITY_CHANGE4 for unity 2018.3 (Networking system)
 
 using UnityEngine;
 using System.Collections;
@@ -17,7 +21,9 @@ using System.Threading;
 #if UNITY_CHANGE3
 using UnityEngine.SceneManagement;
 #endif
-
+#if UNITY_CHANGE4
+using UnityEngine.Networking;
+#endif
 
 
 //this script used for test purpose ,it do by default 100 logs  + 100 warnings + 100 errors
