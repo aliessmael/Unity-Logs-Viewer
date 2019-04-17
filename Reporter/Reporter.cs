@@ -7,7 +7,7 @@
 #else
 #define UNITY_CHANGE3
 #endif
-#if UNITY_2018_3
+#if UNITY_2018_3_OR_NEWER
 #define UNITY_CHANGE4
 #endif
 //use UNITY_CHANGE1 for unity older than "unity 5"
