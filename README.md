@@ -17,7 +17,12 @@ https://www.assetstore.unity3d.com/en/#!/content/12047
 
 
     
-    
+     
+### Version 1.8
+    - Add Copy to clipboard.
+	- Merge Fix for Unity 2019.
+	- Fix ReporterModificationProcessor is annoying.
+	- Fix waste ram.
     
 ### Version 1.7
     - Add Save logs button( thanks for Ahmed Shbli ).

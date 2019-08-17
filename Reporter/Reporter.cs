@@ -43,7 +43,8 @@ public class Images
 	public Texture2D infoImage;
     public Texture2D saveLogsImage; 
     public Texture2D searchImage;
-	public Texture2D closeImage;
+    public Texture2D copyImage;
+    public Texture2D closeImage;
 
 	public Texture2D buildFromImage;
 	public Texture2D systemInfoImage;
@@ -104,7 +105,7 @@ public class Reporter : MonoBehaviour
 		}
 	}
 
-	List<Sample> samples = new List<Sample>(60 * 60 * 60);
+	List<Sample> samples = new List<Sample>();
 
 	public class Log
 	{
@@ -189,8 +190,10 @@ public class Reporter : MonoBehaviour
 	bool showMemButton = true;
 	bool showFpsButton = true;
 	bool showSearchText = true;
+    bool showCopyButton = true;
+    bool showSaveButton = true;
 
-	string buildDate;
+    string buildDate;
 	string logDate;
 	float logsMemUsage;
 	float graphMemUsage;
@@ -246,7 +249,8 @@ public class Reporter : MonoBehaviour
 	GUIContent infoContent;
     GUIContent saveLogsContent;
 	GUIContent searchContent;
-	GUIContent closeContent;
+    GUIContent copyContent;
+    GUIContent closeContent;
 
 	GUIContent buildFromContent;
 	GUIContent systemInfoContent;
@@ -388,7 +392,8 @@ public class Reporter : MonoBehaviour
 		infoContent = new GUIContent("", images.infoImage, "Information about application");
         saveLogsContent = new GUIContent("", images.saveLogsImage, "Save logs to device");
         searchContent = new GUIContent("", images.searchImage, "Search for logs");
-		closeContent = new GUIContent("", images.closeImage, "Hide logs");
+        copyContent = new GUIContent("", images.copyImage, "Copy log to clipboard");
+        closeContent = new GUIContent("", images.closeImage, "Hide logs");
 		userContent = new GUIContent("", images.userImage, "User");
 
 		buildFromContent = new GUIContent("", images.buildFromImage, "Build From");
@@ -425,9 +430,11 @@ public class Reporter : MonoBehaviour
 		showMemButton = (PlayerPrefs.GetInt("Reporter_showMemButton", 1) == 1) ? true : false;
 		showFpsButton = (PlayerPrefs.GetInt("Reporter_showFpsButton", 1) == 1) ? true : false;
 		showSearchText = (PlayerPrefs.GetInt("Reporter_showSearchText", 1) == 1) ? true : false;
+        showCopyButton = (PlayerPrefs.GetInt("Reporter_showCopyButton", 1) == 1) ? true : false;
+        showSaveButton = (PlayerPrefs.GetInt("Reporter_showSaveButton", 1) == 1) ? true : false;
 
 
-		initializeStyle();
+        initializeStyle();
 
 		Initialized = true;
 
@@ -946,7 +953,15 @@ public class Reporter : MonoBehaviour
 		if (GUILayout.Button(searchContent, (showSearchText) ? buttonActiveStyle : barStyle, GUILayout.Width(size.x * 2), GUILayout.Height(size.y * 2))) {
 			showSearchText = !showSearchText;
 		}
-		tempRect = GUILayoutUtility.GetLastRect();
+        if (GUILayout.Button(copyContent, (showCopyButton) ? buttonActiveStyle : barStyle, GUILayout.Width(size.x * 2), GUILayout.Height(size.y * 2)))
+        {
+            showCopyButton = !showCopyButton;
+        }
+        if (GUILayout.Button(saveLogsContent, (showSaveButton) ? buttonActiveStyle : barStyle, GUILayout.Width(size.x * 2), GUILayout.Height(size.y * 2)))
+        {
+            showSaveButton = !showSaveButton;
+        }
+        tempRect = GUILayoutUtility.GetLastRect();
 		GUI.TextField(tempRect, filterText, searchStyle);
 
 
@@ -1064,13 +1079,29 @@ public class Reporter : MonoBehaviour
 			}
 		}
 
-		if (GUILayout.Button(infoContent, barStyle, GUILayout.Width(size.x * 2), GUILayout.Height(size.y * 2))) {
+        if (showCopyButton)
+        {
+            if (GUILayout.Button(copyContent, barStyle, GUILayout.Width(size.x * 2), GUILayout.Height(size.y * 2)))
+            {
+                if (selectedLog == null)
+                    GUIUtility.systemCopyBuffer = "No log selected";
+                else
+                    GUIUtility.systemCopyBuffer = selectedLog.condition + System.Environment.NewLine + System.Environment.NewLine  + selectedLog.stacktrace;
+            }
+        }
+
+        if (showSaveButton)
+        {
+            if (GUILayout.Button(saveLogsContent, barStyle, GUILayout.Width(size.x * 2), GUILayout.Height(size.y * 2)))
+            {
+                SaveLogsToDevice();
+            }
+        }
+
+        if (GUILayout.Button(infoContent, barStyle, GUILayout.Width(size.x * 2), GUILayout.Height(size.y * 2))) {
 			currentView = ReportView.Info;
 		}
-        if (GUILayout.Button(saveLogsContent, barStyle, GUILayout.Width(size.x * 2), GUILayout.Height(size.y * 2)))
-        {
-            SaveLogsToDevice();
-        }
+       
 
 
         GUILayout.FlexibleSpace();
@@ -2036,8 +2067,8 @@ public class Reporter : MonoBehaviour
 	//read build information 
 	IEnumerator readInfo()
 	{
-		string prefFile = "build_info.txt";
-		string url = prefFile;
+		string prefFile = "build_info"; 
+		string url = prefFile; 
 
 		if (prefFile.IndexOf("://") == -1) {
 			string streamingAssetsPath = Application.streamingAssetsPath;

@@ -44,7 +44,8 @@ public class ReporterEditor : Editor
 		reporter.images.infoImage            = (Texture2D)AssetDatabase.LoadAssetAtPath(Path.Combine(reporterPath, "Images/info.png"), typeof(Texture2D));
         reporter.images.saveLogsImage        = (Texture2D)AssetDatabase.LoadAssetAtPath(Path.Combine(reporterPath, "Images/Save.png"), typeof(Texture2D));
         reporter.images.searchImage          = (Texture2D)AssetDatabase.LoadAssetAtPath(Path.Combine(reporterPath, "Images/search.png"), typeof(Texture2D));
-		reporter.images.closeImage           = (Texture2D)AssetDatabase.LoadAssetAtPath(Path.Combine(reporterPath, "Images/close.png"), typeof(Texture2D));
+        reporter.images.copyImage            = (Texture2D)AssetDatabase.LoadAssetAtPath(Path.Combine(reporterPath, "Images/copy.png"), typeof(Texture2D));
+        reporter.images.closeImage           = (Texture2D)AssetDatabase.LoadAssetAtPath(Path.Combine(reporterPath, "Images/close.png"), typeof(Texture2D));
 		reporter.images.buildFromImage       = (Texture2D)AssetDatabase.LoadAssetAtPath(Path.Combine(reporterPath, "Images/buildFrom.png"), typeof(Texture2D));
 		reporter.images.systemInfoImage      = (Texture2D)AssetDatabase.LoadAssetAtPath(Path.Combine(reporterPath, "Images/ComputerIcon.png"), typeof(Texture2D));
 		reporter.images.graphicsInfoImage    = (Texture2D)AssetDatabase.LoadAssetAtPath(Path.Combine(reporterPath, "Images/graphicCard.png"), typeof(Texture2D));
@@ -75,12 +76,13 @@ public class ReporterModificationProcessor : UnityEditor.AssetModificationProces
 		static bool isCompiling = true;
 		static void Update()
 		{
+          
 			if (!EditorApplication.isCompiling && isCompiling) {
 				//Debug.Log("Finish Compile");
 				if (!Directory.Exists(Application.dataPath + "/StreamingAssets")) {
 					Directory.CreateDirectory(Application.dataPath + "/StreamingAssets");
 				}
-				string info_path = Application.dataPath + "/StreamingAssets/build_info.txt";
+				string info_path = Application.dataPath + "/StreamingAssets/build_info"; 
 				StreamWriter build_info = new StreamWriter(info_path);
 				build_info.Write("Build from " + SystemInfo.deviceName + " at " + System.DateTime.Now.ToString());
 				build_info.Close();
