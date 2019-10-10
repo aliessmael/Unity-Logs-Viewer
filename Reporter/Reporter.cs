@@ -44,6 +44,7 @@ public class Images
     public Texture2D saveLogsImage; 
     public Texture2D searchImage;
     public Texture2D copyImage;
+    public Texture2D copyAllImage;
     public Texture2D closeImage;
 
 	public Texture2D buildFromImage;
@@ -191,6 +192,7 @@ public class Reporter : MonoBehaviour
 	bool showFpsButton = true;
 	bool showSearchText = true;
     bool showCopyButton = true;
+    bool showCopyAllButton = true;
     bool showSaveButton = true;
 
     string buildDate;
@@ -250,6 +252,7 @@ public class Reporter : MonoBehaviour
     GUIContent saveLogsContent;
 	GUIContent searchContent;
     GUIContent copyContent;
+    GUIContent copyAllContent;
     GUIContent closeContent;
 
 	GUIContent buildFromContent;
@@ -393,6 +396,7 @@ public class Reporter : MonoBehaviour
         saveLogsContent = new GUIContent("", images.saveLogsImage, "Save logs to device");
         searchContent = new GUIContent("", images.searchImage, "Search for logs");
         copyContent = new GUIContent("", images.copyImage, "Copy log to clipboard");
+        copyAllContent = new GUIContent("", images.copyAllImage, "Copy all logs to clipboard");
         closeContent = new GUIContent("", images.closeImage, "Hide logs");
 		userContent = new GUIContent("", images.userImage, "User");
 
@@ -431,6 +435,7 @@ public class Reporter : MonoBehaviour
 		showFpsButton = (PlayerPrefs.GetInt("Reporter_showFpsButton", 1) == 1) ? true : false;
 		showSearchText = (PlayerPrefs.GetInt("Reporter_showSearchText", 1) == 1) ? true : false;
         showCopyButton = (PlayerPrefs.GetInt("Reporter_showCopyButton", 1) == 1) ? true : false;
+        showCopyAllButton = (PlayerPrefs.GetInt("Reporter_showCopyAllButton", 1) == 1) ? true : false;
         showSaveButton = (PlayerPrefs.GetInt("Reporter_showSaveButton", 1) == 1) ? true : false;
 
 
@@ -957,6 +962,10 @@ public class Reporter : MonoBehaviour
         {
             showCopyButton = !showCopyButton;
         }
+        if (GUILayout.Button(copyAllContent, (showCopyAllButton) ? buttonActiveStyle : barStyle, GUILayout.Width(size.x * 2), GUILayout.Height(size.y * 2)))
+        {
+            showCopyAllButton = !showCopyAllButton;
+        }
         if (GUILayout.Button(saveLogsContent, (showSaveButton) ? buttonActiveStyle : barStyle, GUILayout.Width(size.x * 2), GUILayout.Height(size.y * 2)))
         {
             showSaveButton = !showSaveButton;
@@ -1087,6 +1096,20 @@ public class Reporter : MonoBehaviour
                     GUIUtility.systemCopyBuffer = "No log selected";
                 else
                     GUIUtility.systemCopyBuffer = selectedLog.condition + System.Environment.NewLine + System.Environment.NewLine  + selectedLog.stacktrace;
+            }
+        }
+
+        if (showCopyAllButton)
+        {
+            if (GUILayout.Button(copyAllContent, barStyle, GUILayout.Width(size.x * 2), GUILayout.Height(size.y * 2)))
+            {
+                string allLogsToClipboard = string.Empty;
+                logs.ForEach(l => allLogsToClipboard += l.condition + System.Environment.NewLine + System.Environment.NewLine + l.stacktrace);
+
+                if(string.IsNullOrWhiteSpace(allLogsToClipboard))
+                    GUIUtility.systemCopyBuffer = "No log selected";
+                else
+                    GUIUtility.systemCopyBuffer = allLogsToClipboard;
             }
         }
 
