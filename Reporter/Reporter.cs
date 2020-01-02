@@ -301,8 +301,16 @@ public class Reporter : MonoBehaviour
 #endif
 	string systemMemorySize;
 
+	[SerializeField] private bool deactivateInRelease = default;
+
 	void Awake()
 	{
+		if (deactivateInRelease && !Debug.isDebugBuild)
+		{
+			gameObject.SetActive(false);
+			return;
+		}
+
 		if (!Initialized)
 			Initialize();
 
