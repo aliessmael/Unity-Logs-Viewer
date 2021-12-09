@@ -2,29 +2,32 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class MultiKeyDictionary<T1, T2, T3> : Dictionary<T1, Dictionary<T2, T3>>
+namespace Unity_Logs_Viewer.Reporter
 {
-	new public Dictionary<T2, T3> this[T1 key]
+	public class MultiKeyDictionary<T1, T2, T3> : Dictionary<T1, Dictionary<T2, T3>>
 	{
-		get
+		new public Dictionary<T2, T3> this[T1 key]
 		{
-			if (!ContainsKey(key))
-				Add(key, new Dictionary<T2, T3>());
+			get
+			{
+				if (!ContainsKey(key))
+					Add(key, new Dictionary<T2, T3>());
 
-			Dictionary<T2, T3> returnObj;
-			TryGetValue(key, out returnObj);
+				Dictionary<T2, T3> returnObj;
+				TryGetValue(key, out returnObj);
 
-			return returnObj;
+				return returnObj;
+			}
 		}
-	}
 
-	public bool ContainsKey(T1 key1, T2 key2)
-	{
-		Dictionary<T2, T3> returnObj;
-		TryGetValue(key1, out returnObj);
-		if (returnObj == null)
-			return false;
+		public bool ContainsKey(T1 key1, T2 key2)
+		{
+			Dictionary<T2, T3> returnObj;
+			TryGetValue(key1, out returnObj);
+			if (returnObj == null)
+				return false;
 
-		return returnObj.ContainsKey(key2);
+			return returnObj.ContainsKey(key2);
+		}
 	}
 }
