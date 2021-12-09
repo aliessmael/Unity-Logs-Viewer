@@ -1,16 +1,19 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class ReporterGUI : MonoBehaviour
+namespace Unity_Logs_Viewer.Reporter
 {
-	Reporter reporter;
-	void Awake()
+	public class ReporterGUI : MonoBehaviour
 	{
-		reporter = gameObject.GetComponent<Reporter>();
-	}
+		Reporter reporter;
+		void Awake()
+		{
+			reporter = gameObject.GetComponent<Reporter>();
+		}
 
-	void OnGUI()
-	{
-		reporter.OnGUIDraw();
+		void OnGUI()
+		{
+			reporter.OnGUIDraw();
+		}
 	}
 }
